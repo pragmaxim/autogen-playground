@@ -28,35 +28,44 @@ If you are in doubt which models support function calling and vision, you can ch
 ./scripts/ollama-vision-support.sh /path/to/an/image.jpg
 ```
 
+### Rationale
+
+After grasping these examples, we should be able to build a small team of agents like architect, developer and tester
+who build a project together until it compiles and all tests pass.
+
 ### Examples
 
 ***[Chat Completion Client](examples/0_chat_completion_client.py)***
 
 The simplest form of using autogen is just sending a message to the LLM and getting a response back.
 
-***[Assistant Agent](examples/1_assistant_agent.py)***
+***[Assistant Agent](examples/agents/agent_0_assistant.py)***
 
 Assistant agent is a customizable wrapper around the LLM that can be given context, 
 handle structured and streaming responses, call functions, interact with other agents in teams, and more.
 
-***[Code Executor Agent](examples/2_code_executor_agent.py)***
+***[Code Executor Agent](examples/agents/agent_1_code_executor.py)***
 
 This agent was designed to execute code either in local (`LocalCommandLineCodeExecutor`) or 
 isolated `DockerCommandLineCodeExecutor` environments.
 
-***[Web Surfer Agent](examples/3_web_surfer_agent.py)***
+***[Web Surfer Agent](examples/agents/agent_2_web_surfer.py)***
 
 MultimodalWebSurfer is a multimodal agent that acts as a web surfer that can search the web and visit web pages.
 
-***[Streaming tokens](examples/4_streaming_tokens.py)***
+***[Custom agent](examples/agents/agent_3_custom.py)***
+
+Custom made agent that writes given code to a named file.
+
+***[Streaming tokens](examples/1_streaming_tokens.py)***
 
 Token streaming is useful for applications that require real-time interaction with the LLM, such as chatbots.
 
-***[Structured Response](examples/5_structured_response.py)***
+***[Structured Response](examples/2_structured_response.py)***
 
 Structured responses allow you to define a schema for the responses which can be useful for tasks like classification or structured data extraction.
 
-***[Function Calling](examples/6_function_calling.py)***
+***[Function Calling](examples/3_function_calling.py)***
 
 - `AssistantAgent` sends request to LLM with function/tool definition
 - LLM returns `function_call` (structured tool request)
@@ -73,7 +82,7 @@ Structured responses allow you to define a schema for the responses which can be
      - Feeds function result back to LLM
 - LLM produces final answer
 
-***[MCP Server](examples/7_mcp_server.py)***
+***[MCP Server](examples/4_mcp_server.py)***
 
 1. `AssistantAgent` sends the prompt to LLM with tool metadata (JSON schema, tool name, etc.).
 
@@ -85,13 +94,35 @@ Structured responses allow you to define a schema for the responses which can be
 
 5. `AssistantAgent` continues reasoning or summarizing with the result.
 
-***[Team with Round Robin](examples/8_team_round_robin.py)***
+***[Team with Round Robin](examples/teams/team_0_round_robin.py)***
 
 Team of agents sharing the same context where each agent takes turn and broadcasts response to the rest of the team.
 
-***[Team with Selector](examples/9_team_selector.py)***
+***[Team with Selector](examples/teams/team_1_selector.py)***
 
 Team of agents that selects the next speaker with a selector function.
+
+***[Human in the Loop](examples/5_human_in_the_loop.py)***
+
+One of the team agents is a `UserProxyAgent` which provides input from the user.
+
+***[Termination](examples/6_termination.py)***
+
+- `MaxMessageTermination`: Stops after a specified number of messages have been produced, including both agent and task messages.
+- `TextMentionTermination`: Stops when specific text or string is mentioned in a message (e.g., “TERMINATE”).
+- `TokenUsageTermination`: Stops when a certain number of prompt or completion tokens are used. This requires the agents to report token usage in their messages.
+- `TimeoutTermination`: Stops after a specified duration in seconds.
+- `HandoffTermination`: Stops when a handoff to a specific target is requested to allow another agent to provide input.
+- `SourceMatchTermination`: Stops after a specific agent responds.
+- `ExternalTermination`: Enables programmatic control of termination from outside the run. This is useful for UI integration (e.g., “Stop” buttons in chat interfaces).
+- `StopMessageTermination`: Stops when a StopMessage is produced by an agent.
+- `TextMessageTermination`: Stops when a TextMessage is produced by an agent.
+- `FunctionCallTermination`: Stops when a ToolCallExecutionEvent containing a FunctionExecutionResult with a matching name is produced by an agent.
+- `FunctionalTermination`: Stop when a function expression is evaluated to True on the last delta sequence of messages.
+
+***[Saving](examples/state/state_0_saving.py) and [Loading](examples/state/state_1_loading.py) State***
+
+Agent and Team interfaces have `save_state` and `load_state` methods to either a file or a database.
 
 ### Troubleshooting
 
